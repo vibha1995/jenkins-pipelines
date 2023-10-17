@@ -1,0 +1,39 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Checkout') {
+            steps {
+                git 'https://github.com/vibha1995/website.git'
+            }
+        }
+
+        stage('Build and Test') {
+            when {
+                anyOf {
+                    branch 'master'
+                    branch 'develop'
+                }
+            }
+            steps {
+                script {
+                    def branchName = env.BRANCH_NAME
+                    def testOnly = branchName == 'develop'
+                    def publish = !testOnly
+
+                    // Build the website-builder image
+                    sh 'docker build -t website-builder .'
+
+                    // Run tests
+                    sh 'your_test_command_here'
+
+                    // If 'publish' is true, push to prod
+                    if (publish) {
+                        // Push to prod (replace with your deployment logic)
+                        sh 'docker run -itd -p 82:80 --name=masterserver website-builder'
+                    }
+                }
+            }
+        }
+    }
+}
