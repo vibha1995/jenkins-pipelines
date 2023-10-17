@@ -4,17 +4,11 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git 'https://github.com/vibha1995/website.git'
+                git 'https://github.com/vibha1995/devops-capstone-project.git'
             }
         }
 
         stage('Build and Test') {
-            when {
-                anyOf {
-                    branch 'master'
-                    branch 'develop'
-                }
-            }
             steps {
                 script {
                     def branchName = env.BRANCH_NAME
@@ -22,15 +16,15 @@ pipeline {
                     def publish = !testOnly
 
                     // Build the website-builder image
-                    sh 'docker build -t website-builder .'
+                    sh 'docker build -t test .'
 
-                    // Run tests
-                    sh 'your_test_command_here'
+                    // Run tests (include your testing commands here)
+                    sh "echo 'This is a blank test. It always succeeds.'"
 
                     // If 'publish' is true, push to prod
                     if (publish) {
                         // Push to prod (replace with your deployment logic)
-                        sh 'docker run -itd -p 82:80 --name=masterserver website-builder'
+                        sh 'docker run -itd -p 82:80 --name=masterserver kvibha/test'
                     }
                 }
             }
